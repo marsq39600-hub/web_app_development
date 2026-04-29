@@ -1,0 +1,114 @@
+:root {
+    --bg-color: #f0f2f5;
+    --text-color: #2c3e50;
+    --card-bg: rgba(255, 255, 255, 0.7);
+    --card-border: rgba(255, 255, 255, 0.5);
+    --primary-color: #ff6b6b;
+    --secondary-color: #fca048;
+}
+
+body {
+    background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+    color: var(--text-color);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    margin: 0;
+}
+
+/* Navbar */
+.navbar {
+    background: rgba(255, 255, 255, 0.8) !important;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+    border-bottom: 1px solid var(--card-border);
+}
+.navbar-brand {
+    font-weight: 700;
+    color: var(--primary-color) !important;
+    font-size: 1.5rem;
+}
+
+/* Glass Card */
+.glass-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.recipe-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+}
+
+.recipe-card .card-title {
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+/* Buttons */
+.btn-primary-custom {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    border: none;
+    color: white;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+}
+.btn-primary-custom:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 107, 107, 0.5);
+    color: white;
+}
+
+.btn-outline-custom {
+    border: 2px solid var(--primary-color);
+    color: var(--primary-color);
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+.btn-outline-custom:hover {
+    background: var(--primary-color);
+    color: white;
+}
+
+/* Form Controls */
+.form-control, .form-select {
+    background: rgba(255,255,255, 0.6);
+    border: 1px solid rgba(0,0,0,0.1);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+.form-control:focus {
+    background: white;
+    box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.2);
+    border-color: var(--primary-color);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.5s ease forwards;
+}
+
+/* Badge */
+.badge-step {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+}

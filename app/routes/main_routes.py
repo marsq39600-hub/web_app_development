@@ -7,48 +7,89 @@ from app.models import db
 
 @main_bp.route('/')
 def index():
-    """
-    處理首頁請求，取得所有食譜並渲染列表。
-    輸入: 無
-    處理: 呼叫 Recipe.get_all()
-    輸出: 渲染 templates/index.html
-    """
-    pass
+    recipes = Recipe.get_all()
+    return render_template('index.html', recipes=recipes)
 
 @main_bp.route('/recipe/create', methods=['GET', 'POST'])
 def create_recipe():
-    """
-    處理新增食譜請求。
-    GET: 渲染 templates/create.html 顯示空白表單。
-    POST: 接收表單資料，寫入 DB (Recipe 主檔及關聯的 Ingredient, Step)，成功後重導向至首頁。
-    """
-    pass
+    if request.method == 'POST':
+        title = request.form.get('title')
+        description = request.form.get('description')
+        
+        if not title:
+            flash('菜名為必填欄位', 'error')
+            return render_template('create.html')
+
+        new_recipe = Recipe.create(title=title, description=description)
+
+        ingredient_names = request.form.getlist('ingredient_name[]')
+        ingredient_quantities = request.form.getlist('ingredient_quantity[]')
+        for name, qty in zip(ingredient_names, ingredient_quantities):
+            if name.strip():
+                Ingredient.create(recipe_id=new_recipe.id, name=name.strip(), quantity=qty.strip())
+
+        step_contents = request.form.getlist('step_content[]')
+        for idx, content in enumerate(step_contents, start=1):
+            if content.strip():
+                Step.create(recipe_id=new_recipe.id, step_number=idx, content=content.strip())
+
+        flash('食譜新增成功！', 'success')
+        return redirect(url_for('main.index'))
+        
+    return render_template('create.html')
 
 @main_bp.route('/recipe/<int:id>')
 def recipe_detail(id):
-    """
-    處理單一食譜詳情請求。
-    輸入: URL 的食譜 id
-    處理: 呼叫 Recipe.get_by_id(id) 撈取相關資料。
-    輸出: 渲染 templates/detail.html，若找不到則回傳 404 錯誤或重導向至首頁。
-    """
-    pass
+    recipe = Recipe.get_by_id(id)
+    if not recipe:
+        flash('找不到該食譜', 'error')
+        return redirect(url_for('main.index'))
+    return render_template('detail.html', recipe=recipe)
 
 @main_bp.route('/recipe/<int:id>/edit', methods=['GET', 'POST'])
 def edit_recipe(id):
-    """
-    處理編輯食譜請求。
-    GET: 呼叫 Recipe.get_by_id(id) 取得舊資料，渲染 templates/edit.html 帶入表單。
-    POST: 接收更新後資料，更新 DB 並重新建立關聯子表單，完成後重導向至詳情頁。
-    """
-    pass
+    recipe = Recipe.get_by_id(id)
+    if not recipe:
+        flash('找不到該食譜', 'error')
+        return redirect(url_for('main.index'))
+
+    if request.method == 'POST':
+        title = request.form.get('title')
+        description = request.form.get('description')
+        
+        if not title:
+            flash('菜名為必填欄位', 'error')
+            return render_template('edit.html', recipe=recipe)
+
+        recipe.update(title=title, description=description)
+
+        # Clear old ingredients and steps
+        for ing in recipe.ingredients:
+            ing.delete()
+        for step in recipe.steps:
+            step.delete()
+
+        # Re-add
+        ingredient_names = request.form.getlist('ingredient_name[]')
+        ingredient_quantities = request.form.getlist('ingredient_quantity[]')
+        for name, qty in zip(ingredient_names, ingredient_quantities):
+            if name.strip():
+                Ingredient.create(recipe_id=recipe.id, name=name.strip(), quantity=qty.strip())
+
+        step_contents = request.form.getlist('step_content[]')
+        for idx, content in enumerate(step_contents, start=1):
+            if content.strip():
+                Step.create(recipe_id=recipe.id, step_number=idx, content=content.strip())
+
+        flash('食譜更新成功！', 'success')
+        return redirect(url_for('main.recipe_detail', id=recipe.id))
+
+    return render_template('edit.html', recipe=recipe)
 
 @main_bp.route('/recipe/<int:id>/delete', methods=['POST'])
 def delete_recipe(id):
-    """
-    處理刪除食譜請求。
-    輸入: URL 的食譜 id
-    處理: 呼叫 Recipe.get_by_id(id) 並執行 delete() 方法，藉由資料庫關聯 (CASCADE) 刪除底下材料與步驟。
-    輸出: 重導向至首頁。
-    """
-    pass
+    recipe = Recipe.get_by_id(id)
+    if recipe:
+        recipe.delete()
+        flash('食譜已刪除', 'success')
+    return redirect(url_for('main.index'))

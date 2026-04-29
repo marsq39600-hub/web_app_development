@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center animate-fade-in">
+    <div class="col-lg-8">
+        <div class="mb-4">
+            <h2 class="fw-bold" style="color: var(--text-color);">編輯食譜</h2>
+            <p class="text-muted">修改您的美味秘方</p>
+        </div>
+
+        <form action="{{ url_for('main.edit_recipe', id=recipe.id) }}" method="POST">
+            <div class="glass-card p-4 p-md-5 mb-4 shadow-sm">
+                <!-- 基本資訊 -->
+                <h5 class="mb-3 border-bottom pb-2"><i class="bi bi-info-circle text-primary"></i> 基本資訊</h5>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">菜名 <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control form-control-lg" name="title" required value="{{ recipe.title }}">
+                </div>
+                <div class="mb-4">
+                    <label class="form-label fw-bold">簡介</label>
+                    <textarea class="form-control" name="description" rows="3">{{ recipe.description or '' }}</textarea>
+                </div>
+
+                <!-- 材料清單 -->
+                <h5 class="mb-3 mt-5 border-bottom pb-2 d-flex justify-content-between align-items-center">
+                    <span><i class="bi bi-basket text-warning"></i> 材料清單</span>
+                    <button type="button" class="btn btn-sm btn-outline-custom" id="add-ingredient">
+                        <i class="bi bi-plus"></i> 新增材料
+                    </button>
+                </h5>
+                <div id="ingredient-list">
+                    {% if recipe.ingredients %}
+                        {% for ing in recipe.ingredients %}
+                        <div class="row mb-2 ingredient-row">
+                            <div class="col-6">
+                                <input type="text" class="form-control" name="ingredient_name[]" value="{{ ing.name }}">
+                            </div>
+                            <div class="col-4">
+                                <input type="text" class="form-control" name="ingredient_quantity[]" value="{{ ing.quantity or '' }}">
+                            </div>
+                            <div class="col-2 d-flex align-items-center">
+                                <button type="button" class="btn btn-outline-danger w-100 remove-btn"><i class="bi bi-trash"></i></button>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="row mb-2 ingredient-row">
+                            <div class="col-6">
+                                <input type="text" class="form-control" name="ingredient_name[]" placeholder="名稱 (例: 鹽)">
+                            </div>
+                            <div class="col-4">
+                                <input type="text" class="form-control" name="ingredient_quantity[]" placeholder="份量 (例: 1茶匙)">
+                            </div>
+                            <div class="col-2 d-flex align-items-center">
+                                <button type="button" class="btn btn-outline-danger w-100 remove-btn"><i class="bi bi-trash"></i></button>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- 製作步驟 -->
+                <h5 class="mb-3 mt-5 border-bottom pb-2 d-flex justify-content-between align-items-center">
+                    <span><i class="bi bi-fire text-danger"></i> 製作步驟</span>
+                    <button type="button" class="btn btn-sm btn-outline-custom" id="add-step">
+                        <i class="bi bi-plus"></i> 新增步驟
+                    </button>
+                </h5>
+                <div id="step-list">
+                    {% if recipe.steps %}
+                        {% for step in recipe.steps %}
+                        <div class="row mb-2 step-row">
+                            <div class="col-10">
+                                <textarea class="form-control" name="step_content[]" rows="2">{{ step.content }}</textarea>
+                            </div>
+                            <div class="col-2 d-flex align-items-center">
+                                <button type="button" class="btn btn-outline-danger w-100 remove-btn"><i class="bi bi-trash"></i></button>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="row mb-2 step-row">
+                            <div class="col-10">
+                                <textarea class="form-control" name="step_content[]" rows="2" placeholder="詳細步驟..."></textarea>
+                            </div>
+                            <div class="col-2 d-flex align-items-center">
+                                <button type="button" class="btn btn-outline-danger w-100 remove-btn"><i class="bi bi-trash"></i></button>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end gap-3 mb-5">
+                <a href="{{ url_for('main.recipe_detail', id=recipe.id) }}" class="btn btn-light px-4 border shadow-sm">取消</a>
+                <button type="submit" class="btn btn-primary-custom px-5">更新食譜</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row mb-4 animate-fade-in">
+    <div class="col-12 text-center">
+        <h1 class="display-5 fw-bold" style="color: var(--primary-color);">我的專屬廚房秘笈</h1>
+        <p class="text-muted fs-5">紀錄與探索您的每一道拿手好菜</p>
+    </div>
+</div>
+
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    {% if recipes %}
+        {% for recipe in recipes %}
+        <div class="col animate-fade-in" style="animation-delay: {{ loop.index0 * 0.1 }}s;">
+            <a href="{{ url_for('main.recipe_detail', id=recipe.id) }}" class="text-decoration-none">
+                <div class="card h-100 glass-card recipe-card p-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h4 class="card-title mb-0">{{ recipe.title }}</h4>
+                            <span class="badge bg-light text-dark rounded-pill shadow-sm">
+                                <i class="bi bi-list-ul"></i> {{ recipe.steps|length }} 步驟
+                            </span>
+                        </div>
+                        <p class="card-text text-muted">
+                            {{ recipe.description[:60] ~ '...' if recipe.description and recipe.description|length > 60 else recipe.description or '尚無簡介' }}
+                        </p>
+                        <div class="mt-3">
+                            <small class="text-muted"><i class="bi bi-clock"></i> {{ recipe.created_at.strftime('%Y-%m-%d') }}</small>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="col-12 text-center py-5 animate-fade-in">
+            <div class="glass-card p-5 mx-auto" style="max-width: 500px;">
+                <i class="bi bi-journal-x display-1 text-muted mb-3"></i>
+                <h3>尚無食譜</h3>
+                <p class="text-muted">點擊右上方按鈕，開始建立您的第一道拿手菜吧！</p>
+                <a href="{{ url_for('main.create_recipe') }}" class="btn btn-primary-custom mt-3">新增食譜</a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

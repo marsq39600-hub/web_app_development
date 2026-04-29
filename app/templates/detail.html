@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center animate-fade-in">
+    <div class="col-lg-10">
+        <div class="mb-4">
+            <a href="{{ url_for('main.index') }}" class="text-decoration-none text-muted">
+                <i class="bi bi-arrow-left"></i> 回列表
+            </a>
+        </div>
+        
+        <div class="glass-card p-4 p-md-5 mb-5 shadow-sm">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-start mb-4 gap-3">
+                <div>
+                    <h1 class="display-4 fw-bold" style="color: var(--primary-color);">{{ recipe.title }}</h1>
+                    <p class="text-muted mb-0"><i class="bi bi-clock"></i> 建立於 {{ recipe.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <a href="{{ url_for('main.edit_recipe', id=recipe.id) }}" class="btn btn-outline-custom">
+                        <i class="bi bi-pencil"></i> 編輯
+                    </a>
+                    <form action="{{ url_for('main.delete_recipe', id=recipe.id) }}" method="POST" class="d-inline" onsubmit="return confirm('確定要刪除這道食譜嗎？');">
+                        <button type="submit" class="btn btn-outline-danger">
+                            <i class="bi bi-trash"></i> 刪除
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            {% if recipe.description %}
+            <div class="mb-5 px-4 py-3" style="background: rgba(255,255,255,0.5); border-left: 4px solid var(--primary-color); border-radius: 4px;">
+                <p class="mb-0 fs-5 text-dark">{{ recipe.description }}</p>
+            </div>
+            {% endif %}
+
+            <div class="row g-5">
+                <div class="col-md-4">
+                    <h4 class="mb-4 fw-bold"><i class="bi bi-basket text-warning"></i> 準備材料</h4>
+                    <ul class="list-group list-group-flush shadow-sm rounded-3">
+                        {% if recipe.ingredients %}
+                            {% for ing in recipe.ingredients %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent border-bottom">
+                                <span class="fw-semibold">{{ ing.name }}</span>
+                                <span class="badge bg-light text-dark shadow-sm">{{ ing.quantity or '-' }}</span>
+                            </li>
+                            {% endfor %}
+                        {% else %}
+                            <li class="list-group-item text-muted bg-transparent">未建立材料清單</li>
+                        {% endif %}
+                    </ul>
+                </div>
+                
+                <div class="col-md-8">
+                    <h4 class="mb-4 fw-bold"><i class="bi bi-fire text-danger"></i> 製作步驟</h4>
+                    <div class="d-flex flex-column gap-3">
+                        {% if recipe.steps %}
+                            {% for step in recipe.steps %}
+                            <div class="d-flex gap-3 align-items-start bg-white bg-opacity-50 p-3 rounded-3 shadow-sm border border-light">
+                                <span class="badge-step text-white shadow-sm flex-shrink-0">{{ step.step_number }}</span>
+                                <p class="mb-0 fs-5">{{ step.content }}</p>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <p class="text-muted">未建立製作步驟</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
