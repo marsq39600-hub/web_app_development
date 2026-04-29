@@ -1,0 +1,22 @@
+CREATE TABLE recipes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE ingredients (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    recipe_id INTEGER NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    quantity VARCHAR(100),
+    FOREIGN KEY (recipe_id) REFERENCES recipes (id) ON DELETE CASCADE
+);
+
+CREATE TABLE steps (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    recipe_id INTEGER NOT NULL,
+    step_number INTEGER NOT NULL,
+    content TEXT NOT NULL,
+    FOREIGN KEY (recipe_id) REFERENCES recipes (id) ON DELETE CASCADE
+);
